@@ -16,13 +16,13 @@ public class Product {
         this.name = name;
         this.brand = brand;
         this.price = price;
-        if (this.iva == 0) {
+        this.iva = iva;
+        if (this.iva == 0.0) {
             this.iva = 0.22f;
-        } else {
-            this.iva = iva;
         }
 
-        this.code=rand.nextInt(9999);
+        setCode(rand.nextInt(9999));
+        // this.code=rand.nextInt(9999);
     }
 
     public String getName() {
