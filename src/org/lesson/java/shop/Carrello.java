@@ -26,7 +26,7 @@ public class Carrello {
 
     public void getCartProduct() {
 
-        if (cartProduct != null) {
+        if (cartProduct.length!=0) {
 
             for (Product product : cartProduct) {
                 System.out.println(product);
