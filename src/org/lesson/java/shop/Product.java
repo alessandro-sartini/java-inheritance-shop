@@ -65,4 +65,9 @@ public class Product {
         this.iva = updatedIva;
     }
 
+    @Override
+    public String toString() {
+        return String.format("Nome: %s, Marca: %s, Prezzo: %.2f, IVA: %.2f%%, Codice: %04d",
+                this.name, this.brand, this.price, this.iva * 100, this.code);
+    }
 }

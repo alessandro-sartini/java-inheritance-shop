@@ -28,6 +28,11 @@ public class Smartphone extends Product{
         return this.imei;
     }
 
+    @Override
+    public String toString() {
+        return super.toString()+ String.format(", storage: %dgb", storage);
+    }
+
 
 
 

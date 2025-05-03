@@ -25,13 +25,21 @@ public class Television extends Product {
         this.isSmart = newIsSmart;
     }
 
-    public String getIsSmart() {
+    public boolean getIsSmart() {
+        return isSmart;
+    }
+
+    public String getIsSmartStrng() {
         if (isSmart) {
             return "Smart-TV";
         } else {
 
             return "NO Smart-TV";
         }
+    }
+    @Override
+    public String toString() {
+        return super.toString() + String.format(", %s, inchs: %d", this.getIsSmartStrng(), this.inchs);
     }
 
 }
