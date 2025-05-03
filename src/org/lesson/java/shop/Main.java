@@ -12,6 +12,13 @@ public class Main {
             0.45f,
             256
         );
+        // Smartphone sm2 = new Smartphone(
+        //     "G7",
+        //     "LG",
+        //     new BigDecimal(120.20),
+        //     0.45f,
+        //     256
+        // );
         System.out.println(sm1.getStorage());
 
         Television tv1= new Television(
