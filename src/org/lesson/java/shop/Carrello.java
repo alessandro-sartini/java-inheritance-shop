@@ -12,77 +12,46 @@ public class Carrello {
     }
 
     public void addToCart(Product addProduct) {
-
         Product[] updatedCart = new Product[cartProduct.length + 1];
-
-        for (int i = 0; i < cartProduct.length; i++) {
-            updatedCart[i] = cartProduct[i];
-        }
+        System.arraycopy(cartProduct, 0, updatedCart, 0, cartProduct.length);
         updatedCart[updatedCart.length - 1] = addProduct;
-
         cartProduct = updatedCart;
-
     }
 
     public void getCartProduct() {
-
         if (cartProduct.length != 0) {
-
             for (Product product : cartProduct) {
                 System.out.println(product);
             }
-
         } else {
             System.out.println("Il carrello è vuoto.");
         }
-
     }
 
     public static boolean isDiscountCard(String inputCard) {
-        if (inputCard.toLowerCase().equals("si")) {
-
-            return true;
-        }
-        return false;
+        return inputCard.equalsIgnoreCase("si");
     }
 
-    public static BigDecimal discountPriceTv(boolean isDiscountCard, boolean isSmart, BigDecimal price) {
-        if (isDiscountCard && !isSmart) {
-            return price.multiply(new BigDecimal("0.90"));
-           
-        } else if (isDiscountCard && isSmart) {
-            return price.multiply(new BigDecimal("0.98"));
-             
+    public String getProductDescriptionWithDiscount(Product product, boolean hasLoyaltyCard) {
+        BigDecimal discountedPrice = product.getDiscountedPrice(hasLoyaltyCard).multiply(BigDecimal.ONE.add(new BigDecimal(product.getIva())));
+        String basePriceWithIva = product.getPriceWithIva().toString();
+        String discountedPriceStr = discountedPrice.toString();
+        String description = product.toString().replace(String.format("Prezzo base: %.2f", product.getPrice())
+        , String.format("Prezzo base: %s", product.getPrice()));
 
-        } else {
-            return price;
+        if (!basePriceWithIva.equals(discountedPriceStr)) {
+            description += String.format(", Prezzo scontato: %.s", discountedPriceStr);
         }
+        return description;
     }
 
-    public static BigDecimal discountPriceSm(boolean isDiscountCard, int storage, BigDecimal price) {
-        if (isDiscountCard && storage<32) {
-            return price.multiply(new BigDecimal("0.95"));
-           
-        } else if (isDiscountCard && storage>32) {
-            return price.multiply(new BigDecimal("0.98"));
-             
-
+    public void getCartProduct(boolean hasLoyaltyCard) {
+        if (cartProduct.length != 0) {
+            for (Product product : cartProduct) {
+                System.out.println(getProductDescriptionWithDiscount(product, hasLoyaltyCard));
+            }
         } else {
-            return price;
-        }
-    }
-
-    
-    public static BigDecimal discountPriceHd(boolean isDiscountCard, boolean isWireless, BigDecimal price) {
-        if (isDiscountCard && !isWireless) {
-            return price.multiply(new BigDecimal("0.93"));
-           
-        } else if (isDiscountCard && isWireless) {
-            return price.multiply(new BigDecimal("0.98"));
-             
-
-        } else {
-            return price;
+            System.out.println("Il carrello è vuoto.");
         }
     }
 
@@ -92,28 +61,43 @@ public class Carrello {
         Scanner sc = new Scanner(System.in);
         boolean isChoice = true;
 
-        // System.out.println("Benvenuto nel carrello!");
-        System.out.println("Sei in possesso della nostra tessara sconto?");
+        System.out.println("Sei in possesso della nostra tessera sconto? (si/no)");
         String discountMethod = sc.nextLine();
-        boolean discountCard = isDiscountCard(discountMethod);
-        System.out.println(discountCard);
+        boolean hasLoyaltyCard = isDiscountCard(discountMethod);
+        System.out.println("Hai la tessera sconto: " + hasLoyaltyCard);
 
         while (isChoice) {
-            
 
-            System.out.println("\nChe cosa stai inserendo?");
+            System.out.println("\nChe cosa vuoi fare?");
+            System.out.println("1 - Aggiungere un televisore");
+            System.out.println("2 - Aggiungere uno smartphone");
+            System.out.println("3 - Aggiungere delle cuffie");
+            System.out.println("4 - Vedere il carrello");
+            System.out.println("0 - Chiudere");
             System.out.println();
-            System.out.println("tv per aggiungere un televisore");
-            System.out.println("smartphone per aggiungere un smartphone");
-            System.out.println("headphone per aggiungere un headphone");
-            System.out.println("show per vedere il carrello");
-            System.out.println("x per chiudere");
-            System.out.println();
+            System.out.print("Scelta: ");
 
             String inputUtente = sc.nextLine();
 
-            switch (inputUtente.toLowerCase()) {
-                case "smartphone":
+            switch (inputUtente) {
+                case "1":
+                    System.out.print("Inserisci il nome del Televisore: ");
+                    String nomeTv = sc.nextLine();
+                    System.out.print("Inserisci la marca del Televisore: ");
+                    String marcaTv = sc.nextLine();
+                    System.out.print("Inserisci il prezzo del Televisore: ");
+                    BigDecimal prezzoTv = new BigDecimal(sc.nextLine());
+                    System.out.print("Inserisci l'IVA del Televisore: ");
+                    float ivaTv = Float.parseFloat(sc.nextLine());
+                    System.out.print("Inserisci le dimensioni in pollici del Televisore: ");
+                    int dimensioniTv = Integer.parseInt(sc.nextLine());
+                    System.out.print("Il televisore è smart? (si/no): ");
+                    String smart = sc.nextLine();
+                    boolean isSmartTv = smart.equalsIgnoreCase("si");
+                    cart.addToCart(new Television(nomeTv, marcaTv, prezzoTv, ivaTv / 100, dimensioniTv, isSmartTv));
+                    System.out.println("Televisore aggiunto al carrello.");
+                    break;
+                case "2":
                     System.out.print("Inserisci il nome dello Smartphone: ");
                     String nomeSm = sc.nextLine();
                     System.out.print("Inserisci la marca dello Smartphone: ");
@@ -127,29 +111,7 @@ public class Carrello {
                     cart.addToCart(new Smartphone(nomeSm, marcaSm, prezzoSm, ivaSm / 100, memoriaSm));
                     System.out.println("Smartphone aggiunto al carrello.");
                     break;
-                case "tv":
-                    System.out.print("Inserisci il nome del Televisore: ");
-                    String nomeTv = sc.nextLine();
-                    System.out.print("Inserisci la marca del Televisore: ");
-                    String marcaTv = sc.nextLine();
-                    System.out.print("Inserisci il prezzo del Televisore: ");
-                    BigDecimal prezzoTv = new BigDecimal(sc.nextLine());
-                    System.out.print("Inserisci l'IVA del Televisore: ");
-                    float ivaTv = Float.parseFloat(sc.nextLine());
-                    System.out.print("Inserisci le dimensioni in pollici del Televisore: ");
-                    int dimensioniTv = Integer.parseInt(sc.nextLine());
-                    System.out.print("Il televisore è smart? (si/no): ");
-                    String smart = sc.nextLine();
-                    boolean isSmartTv = false;
-                    if (smart.toLowerCase().equals("si")) {
-                        isSmartTv = true;
-                    } else {
-                        isSmartTv = false;
-                    }
-                    cart.addToCart(new Television(nomeTv, marcaTv, prezzoTv, ivaTv / 100, dimensioniTv, isSmartTv));
-                    System.out.println("Televisore aggiunto al carrello.");
-                    break;
-                case "headphone":
+                case "3":
                     System.out.print("Inserisci il nome delle Cuffie: ");
                     String nomeHp = sc.nextLine();
                     System.out.print("Inserisci la marca delle Cuffie: ");
@@ -161,22 +123,17 @@ public class Carrello {
                     System.out.print("Inserisci il colore delle Cuffie: ");
                     String coloreHp = sc.nextLine();
                     System.out.print("Le cuffie sono wireless? (si/no): ");
-                    boolean isWireless = false;
-                    String wirlessString = sc.nextLine();
-                    if (wirlessString.toLowerCase().equals("si")) {
-                        isWireless = true;
-                    } else {
-                        isWireless = false;
-                    }
+                    String wirelessString = sc.nextLine();
+                    boolean isWireless = wirelessString.equalsIgnoreCase("si");
                     cart.addToCart(new Headphones(nomeHp, marcaHp, prezzoHp, ivaHp / 100, coloreHp, isWireless));
                     System.out.println("Cuffie aggiunte al carrello.");
                     break;
-                case "show":
+                case "4":
                     System.out.println("\n--- Carrello ---");
-                    cart.getCartProduct();
+                    cart.getCartProduct(hasLoyaltyCard);
                     System.out.println("----------------");
                     break;
-                case "x":
+                case "0":
                     isChoice = false;
                     System.out.println("Grazie per aver fatto acquisti!");
                     sc.close();
