@@ -29,6 +29,15 @@ public class Smartphone extends Product{
     }
 
     @Override
+    public BigDecimal getDiscountedPrice(boolean hasLoyaltyCard) {
+        BigDecimal discountedPrice= super.getDiscountedPrice(hasLoyaltyCard);
+        if (hasLoyaltyCard && this.storage < 32) {
+            return this.getPrice().multiply(new BigDecimal("0.95")); 
+        }
+        return discountedPrice;
+    }
+
+    @Override
     public String toString() {
         return super.toString()+ String.format(", storage: %dgb", storage);
     }

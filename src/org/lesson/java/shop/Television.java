@@ -37,6 +37,17 @@ public class Television extends Product {
             return "NO Smart-TV";
         }
     }
+
+    @Override
+    public BigDecimal getDiscountedPrice(boolean hasLoyaltyCard) {
+        BigDecimal discountedPrice = super.getDiscountedPrice(hasLoyaltyCard); 
+
+        if (hasLoyaltyCard && !this.isSmart) {
+            return this.getPrice().multiply(new BigDecimal("0.90"));
+        }
+        return discountedPrice;
+    }
+
     @Override
     public String toString() {
         return super.toString() + String.format(", %s, inchs: %d", this.getIsSmartStrng(), this.inchs);

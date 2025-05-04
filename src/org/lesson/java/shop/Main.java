@@ -39,7 +39,7 @@ public class Main {
             "white", 
             false
         );
-        System.out.println(hp1.getIsWirless());
+        System.out.println(hp1.getisWireless());
         System.out.println(hp1);
         System.out.println(sm1);
         System.out.println(tv1);

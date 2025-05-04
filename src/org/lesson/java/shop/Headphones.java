@@ -4,12 +4,12 @@ import java.math.BigDecimal;
 
 public class Headphones extends Product{
     private String color;
-    private boolean isWirless;
+    private boolean isWireless;
 
-    public Headphones(String name, String brand, BigDecimal price, float iva, String color,boolean isWirless) {
+    public Headphones(String name, String brand, BigDecimal price, float iva, String color,boolean isWireless) {
         super(name, brand, price, iva);
         this.color=color;
-        this.isWirless=isWirless;
+        this.isWireless=isWireless;
     }
 
     public void setColor(String newColor){
@@ -18,14 +18,14 @@ public class Headphones extends Product{
     public String getColor(){
         return this.color;
     }
-    public void setIsWirless(boolean isWirless){
-        this.isWirless=isWirless;
+    public void setisWireless(boolean isWireless){
+        this.isWireless=isWireless;
     }
-    public boolean getIsWirless(){
-        return this.isWirless;
+    public boolean getisWireless(){
+        return this.isWireless;
     }
-    public String getIsWirlessString(){
-        if (isWirless) {
+    public String getisWirelessString(){
+        if (isWireless) {
 
             return "Wirless";
             
@@ -36,8 +36,18 @@ public class Headphones extends Product{
     }
 
     @Override
+    public BigDecimal getDiscountedPrice(boolean hasLoyaltyCard) {
+        BigDecimal discountedPrice = super.getDiscountedPrice(hasLoyaltyCard); 
+
+        if (hasLoyaltyCard && !this.isWireless) {
+            return this.getPrice().multiply(new BigDecimal("0.93")); 
+        }
+        return discountedPrice;
+    }
+
+    @Override
     public String toString() {
-        return super.toString() + String.format(", color: %s, %s", this.color, this.getIsWirlessString());
+        return super.toString() + String.format(", color: %s, %s", this.color, this.getisWirelessString());
     }
 
 }

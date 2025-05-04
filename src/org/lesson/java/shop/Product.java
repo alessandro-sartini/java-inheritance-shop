@@ -64,10 +64,19 @@ public class Product {
     public void setIva(float updatedIva) {
         this.iva = updatedIva;
     }
+    public BigDecimal getPriceWithIva() {
+        return this.price.multiply(BigDecimal.ONE.add(new BigDecimal(this.iva))).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    }
 
+    public BigDecimal getDiscountedPrice(boolean hasLoyaltyCard) {
+        if (hasLoyaltyCard) {
+            return this.price.multiply(new BigDecimal("0.98"));
+        }
+        return this.price;
+    }
     @Override
     public String toString() {
-        return String.format("Nome: %s, Marca: %s, Prezzo: %.2f, IVA: %.2f%%, Codice: %04d",
-                this.name, this.brand, this.price, this.iva * 100, this.code);
+        return String.format("Nome: %s, Marca: %s, Prezzo base: %.2f, IVA: %.2f%%, Prezzo IVA inclusa: %.2f, Codice: %04d",
+                this.name, this.brand, this.price, this.iva * 100, getPriceWithIva(), this.code);
     }
 }
