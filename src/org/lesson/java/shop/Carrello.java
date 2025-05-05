@@ -1,6 +1,7 @@
 package org.lesson.java.shop;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Scanner;
 
 public class Carrello {
@@ -29,19 +30,34 @@ public class Carrello {
     }
 
     public static boolean isDiscountCard(String inputCard) {
-        return inputCard.equalsIgnoreCase("si");
+        if (inputCard.equalsIgnoreCase("si")) {
+            return true;
+        }
+        return false;
+
+        // return inputCard.equalsIgnoreCase("si");
     }
 
     public String getProductDescriptionWithDiscount(Product product, boolean hasLoyaltyCard) {
-        BigDecimal discountedPrice = product.getDiscountedPrice(hasLoyaltyCard).multiply(BigDecimal.ONE.add(new BigDecimal(product.getIva())));
-        String basePriceWithIva = product.getPriceWithIva().toString();
-        String discountedPriceStr = discountedPrice.toString();
-        String description = product.toString().replace(String.format("Prezzo base: %.2f", product.getPrice())
-        , String.format("Prezzo base: %s", product.getPrice()));
+        // Calcola il prezzo scontato CON IVA e formattalo a 2 decimali
+        BigDecimal discountedPriceWithIva = product.getDiscountedPrice(hasLoyaltyCard)
+                .multiply(BigDecimal.ONE.add(new BigDecimal(product.getIva())))
+                .setScale(2, RoundingMode.HALF_UP
+        );
 
-        if (!basePriceWithIva.equals(discountedPriceStr)) {
-            description += String.format(", Prezzo scontato: %.s", discountedPriceStr);
+        BigDecimal basePriceWithIva = product.getPriceWithIva().setScale(2, RoundingMode.HALF_UP);
+
+        String formattedBasePriceWithIvaStr = basePriceWithIva.toPlainString();
+        String formattedDiscountedPriceWithIvaStr = discountedPriceWithIva.toPlainString();
+
+        String description = product.toString();
+
+        description += String.format(" | Prezzo con IVA (base): %s ", formattedBasePriceWithIvaStr);
+
+        if (basePriceWithIva.compareTo(discountedPriceWithIva) != 0) {
+            description += String.format(" | Prezzo con IVA (scontato): %s ", formattedDiscountedPriceWithIvaStr);
         }
+
         return description;
     }
 
@@ -50,6 +66,20 @@ public class Carrello {
             for (Product product : cartProduct) {
                 System.out.println(getProductDescriptionWithDiscount(product, hasLoyaltyCard));
             }
+            for (Product product : cartProduct) {
+                System.out.println(
+                    getProductDescriptionWithDiscount(product, hasLoyaltyCard)+
+                    "prezzo scontato a: "
+                    +product.getDiscountedPrice(hasLoyaltyCard)
+                );
+            }
+            BigDecimal somma= new BigDecimal(0);
+            for (Product product : cartProduct) {
+                somma=somma.add(product.getPriceWithIva());
+            }
+            System.out.println(
+               "Somma senza sconto con iva: "+somma
+            );
         } else {
             System.out.println("Il carrello è vuoto.");
         }
